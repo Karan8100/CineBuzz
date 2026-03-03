@@ -1,39 +1,37 @@
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-import User from "../models/user.js";
+import User from "../models/User.js";
 
-
-//api to check if user is admin
+// API to check if user is an admin
 export const isAdmin = async (req, res) => {
   res.json({ success: true, isAdmin: true });
 };
 
-//getting dashboard data
+// API to get dashboard data
 export const getDashboardData = async (req, res) => {
-    try{
-         const bookings = await Booking.find({ isPaid: true });
-        const activeShows = await Show.find({
+  try {
+    const bookings = await Booking.find({ isPaid: true });
+    const activeShows = await Show.find({
       showDateTime: { $gte: new Date() },
     }).populate("movie");
 
     const totalUser = await User.countDocuments();
 
-
     const dashboardData = {
-        totalBookings : bookings.length,
-        totalRevenue : bookings.reduce((acc,booking)=>acc+booking.amount,0),
-        activeShows,
-        totalUser
-    }
-    res.json({success:true,dashboardData})
-    }catch(error){
-     console.log(error)
-     res.json({success:false,message:error.message})
-    }
-}
+      totalBookings: bookings.length,
+      totalRevenue: bookings.reduce((acc, booking) => acc + booking.amount, 0),
+      activeShows,
+      totalUser,
+    };
 
+    res.json({ success: true, dashboardData });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-//api to get all shows
+// API to get all shows
 export const getAllShows = async (req, res) => {
   try {
     const shows = await Show.find({ showDateTime: { $gte: new Date() } })
@@ -47,7 +45,7 @@ export const getAllShows = async (req, res) => {
   }
 };
 
-
+// API to get all bookings
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({})
@@ -64,4 +62,3 @@ export const getAllBookings = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
-

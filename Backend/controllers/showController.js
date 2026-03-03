@@ -1,7 +1,9 @@
 import axios from "axios";
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
+import { inngest } from "../inngest/index.js";
 
+// API to get now playing movies from TMDB API
 export const getNowPlayingMovies = async (req, res) => {
   try {
     const { data } = await axios.get(
@@ -19,7 +21,6 @@ export const getNowPlayingMovies = async (req, res) => {
   }
 };
 
-// #api to add show
 // API to add a new show to the database
 export const addShow = async (req, res) => {
   try {
@@ -92,8 +93,7 @@ export const addShow = async (req, res) => {
   }
 };
 
-
-// api for get shows
+// API to get all shows from the database
 export const getShows = async (req, res) => {
   try {
     const shows = await Show.find({ showDateTime: { $gte: new Date() } })
