@@ -12,11 +12,10 @@ import userRouter from "./routes/userRoutes.js";
 import { stripeWebhooks } from "./controllers/stripeWebhooks.js";
 
 const app = express();
+const port = process.env.PORT || 5000;
 
-
-
+// 1. Database ko bahar connect karo taaki Vercel use trigger kar sake
 connectDB();
-
 
 // Stripe Webhooks Route
 app.use(
@@ -31,16 +30,19 @@ app.use(cors());
 app.use(clerkMiddleware());
 
 // API Routes
-app.get("/", (req, res) => res.send("Server is Live!"));
+app.get("/", (req, res) => res.send("Server is Live on Vercel!"));
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/show", showRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);
 
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
-}
-  
+// 2. CRITICAL: Vercel ke liye app export karna zaroori hai
+export default app;
 
+// 3. Local machine ke liye (Vercel isko ignore karega)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+}
